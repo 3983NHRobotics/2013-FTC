@@ -75,9 +75,6 @@ void chooseProgram() {
 			eraseDisplay();
 			updateDisplay();
 		}
-		if (selectionValue == 5) {
-			setBatPower();
-		}
 	}
 }
 
@@ -194,4 +191,3 @@ void runSelectedPgm() {
 			break;
 	}
 }
-

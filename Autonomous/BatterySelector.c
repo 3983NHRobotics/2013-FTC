@@ -27,8 +27,7 @@ int selectedBat = -1;
 int batValue = 1;
 int totalBatChoices = 5;
 
-//void setBatPower() {
-task(main) {
+void setBatPower() {
 	updateBatFirst();
 
 	wait1Msec(50);

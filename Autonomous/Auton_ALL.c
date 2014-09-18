@@ -82,11 +82,13 @@ int degFirstTurn = 88; //87//if you do anything to this, do the opposite to the 
 int degFirstTurnForRev = 86; //87
 int degSecondTurn = 48; //47//same for this one - should add up to 46 (0)
 int degSecondTurnForRev = 120;
+int batteryOffsetValue = 0; //make this smaller to make the bot turn more to the left - negative numbers are ok, according to maths
 int degToUse;
 int linesToFind = 0;
 int linesFound = 0;
 int WHITE_LINE_VALUE = 280;
 int BLACK_MAT_VALUE = 200; //pointless
+
 float rotSpeed = 0;
 float heading = 92;
 
@@ -135,55 +137,35 @@ task main() {
 	}
 
 	if ((externalBatteryAvg / (float) 1000) >= 13) {
-		degFirstTurn = 89; //87//if you do anything to this, do the opposite to the other (46)
-		degFirstTurnForRev = 87; //87
-		degSecondTurn = 47; //47//same for this one - should add up to 46 (0)
-		degSecondTurnForRev = 115;
-		PlayTone(500, 10);
-		wait1Msec(300);
-		PlayTone(700, 10);
-		wait1Msec(300);
-		PlayTone(900, 10);
-		wait1Msec(300);
-		PlayTone(1100, 10);
-		wait1Msec(300);
-		PlayTone(1300, 10);
+		degFirstTurn = 70 + batteryOffsetValue; //87//if you do anything to this, do the opposite to the other (46)
+		degFirstTurnForRev = 87 + batteryOffsetValue; //87
+		degSecondTurn = 30 + batteryOffsetValue; //47//same for this one - should add up to 46 (0)
+		degSecondTurnForRev = 115 + batteryOffsetValue;
+		
 		} else if ((externalBatteryAvg / (float) 1000) >= 12 && (externalBatteryAvg / (float) 1000) < 13) {
-		degFirstTurn = 88; //87//if you do anything to this, do the opposite to the other (46)
-		degFirstTurnForRev = 86; //87
-		degSecondTurn = 48; //47//same for this one - should add up to 46 (0)
-		degSecondTurnForRev = 120;
-		PlayTone(500, 10);
-		wait1Msec(300);
-		PlayTone(700, 10);
-		wait1Msec(300);
-		PlayTone(900, 10);
-		wait1Msec(300);
-		PlayTone(1100, 10);
+		degFirstTurn = 71 + batteryOffsetValue; //87//if you do anything to this, do the opposite to the other (46)
+		degFirstTurnForRev = 86 + batteryOffsetValue; //87
+		degSecondTurn = 36 + batteryOffsetValue; //47//same for this one - should add up to 46 (0)
+		degSecondTurnForRev = 120 + batteryOffsetValue;
+		
 		} else if ((externalBatteryAvg / (float) 1000) >= 11 && (externalBatteryAvg / (float) 1000) < 12) {
-		degFirstTurn = 88; //87//if you do anything to this, do the opposite to the other (46)
-		degFirstTurnForRev = 86; //87
-		degSecondTurn = 48; //47//same for this one - should add up to 46 (0)
-		degSecondTurnForRev = 120;
-		PlayTone(500, 10);
-		wait1Msec(300);
-		PlayTone(700, 10);
-		wait1Msec(300);
-		PlayTone(900, 10);
+		degFirstTurn = 70 + batteryOffsetValue; //87//if you do anything to this, do the opposite to the other (46)
+		degFirstTurnForRev = 85 + batteryOffsetValue; //87
+		degSecondTurn = 37 + batteryOffsetValue; //47//same for this one - should add up to 46 (0)
+		degSecondTurnForRev = 120 + batteryOffsetValue;
+		
 		} else if ((externalBatteryAvg / (float) 1000) >= 10 && (externalBatteryAvg / (float) 1000) < 11) {
-		degFirstTurn = 88; //87//if you do anything to this, do the opposite to the other (46)
-		degFirstTurnForRev = 86; //87
-		degSecondTurn = 48; //47//same for this one - should add up to 46 (0)
-		degSecondTurnForRev = 120;
-		PlayTone(500, 10);
-		wait1Msec(300);
-		PlayTone(700, 10);
+		degFirstTurn = 86 + batteryOffsetValue; //87//if you do anything to this, do the opposite to the other (46)
+		degFirstTurnForRev = 84 + batteryOffsetValue; //87
+		degSecondTurn = 46 + batteryOffsetValue; //47//same for this one - should add up to 46 (0)
+		degSecondTurnForRev = 120 + batteryOffsetValue;
+
 		} else if ((externalBatteryAvg / (float) 1000) >= 9 && (externalBatteryAvg / (float) 1000) < 10) {
-		degFirstTurn = 88; //87//if you do anything to this, do the opposite to the other (46)
-		degFirstTurnForRev = 86; //87
-		degSecondTurn = 48; //47//same for this one - should add up to 46 (0)
-		degSecondTurnForRev = 120;
-		PlayTone(500, 10);
+		degFirstTurn = 85 + batteryOffsetValue; //87//if you do anything to this, do the opposite to the other (46)
+		degFirstTurnForRev = 83 + batteryOffsetValue; //87
+		degSecondTurn = 45 + batteryOffsetValue; //47//same for this one - should add up to 46 (0)
+		degSecondTurnForRev = 120 + batteryOffsetValue;
+
 		} else {
 		//keep default values
 	}
@@ -261,7 +243,10 @@ while(searching)
 	if (acS3L > irFindVal) { //if sensor is directly in front of beacon
 
 		if (time1[T1] < 2000) {
-			wait1Msec(600);
+			wait1Msec(750);
+		}
+		if (time1[T1] > 2000) {
+			wait1Msec(300);
 		}
 
 		motor[motorLeft] = 0;
@@ -287,7 +272,7 @@ if (goToEnd) {
 		driveToEnd(-80, timeToEnd - roundTime);//drive to end of ramp
 	}
 	if (FORWARD_SCORE_BACKWARD_LINE_1 || FORWARD_SCORE_BACKWARD_LINE_2) {
-		driveToEnd(80, roundTime - 600);
+		driveToEnd(80, roundTime);
 	}
 }
 
@@ -339,7 +324,8 @@ while (true) {
 				break;
 			}
 
-			if (time1[T3] > 3800) {
+			if (time1[T3] > 3200) {
+				linesFound = 100;
 				break;
 			}
 		}
@@ -396,6 +382,8 @@ servo[servoUSSeeker] = 92;
 USScanVal = 92;
 float heading = 92;
 LSsetInactive(LEGOLS);
+
+//This never has time to run, so comment it out
 HTGYROstartCal(HTGYRO);
 
 while (koth) {
@@ -444,6 +432,7 @@ while (koth) {
 		koth = false;
 	}
 }//while koth
+
 MissionImpossible();
 }
 //END MAIN IF PROGIDS THING

@@ -1,4 +1,4 @@
-2013-FTC
-========
+teleop + autonomous
+======
 
-Code from FTC challenge 2013
+2013-2014 Code for FIRST Tech Challenge

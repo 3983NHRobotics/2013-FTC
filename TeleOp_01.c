@@ -31,7 +31,7 @@
 #include "JoystickDriver.c"
 
 void scoreCube();
-
+bool reversedControl = false;
 task main()
 
 {
@@ -60,17 +60,17 @@ task main()
 			//This code is in here now so that it only works if the robot is not currently turning
 			//This is to prevent OVing teh batteries and causing a motor lockup
 
-			if (ServoValue[servoSweep] < 198) { //makes sure the sweeper arm is lifted up before the main arm can move
-				if (joy2Btn(6)) {									//so that the main arm cannot get stuck on the sweeper arm.
-					servo[servoSweep] = 87;//sets the sweeper arm to upward pos just in case
-					motor[motorArm] = 100;
-					} else if(joy2Btn(8)) {
-					servo[servoSweep] = 87;//sets the sweeper arm to upward pos just in case
-					motor[motorArm] = -100;
-					} else {
-					motor[motorArm] = 0;
-				}
-			}
+			 if (ServoValue[servoSweep] < 180) { //makes sure the sweeper arm is lifted up before the main arm can move
+			 	if (joy2Btn(6)) {									//so that the main arm cannot get stuck on the sweeper arm.
+			 		servo[servoSweep] = 87;//sets the sweeper arm to upward pos just in case
+			 		motor[motorArm] = 100;
+			 		} else if(joy2Btn(8)) {
+			 		servo[servoSweep] = 87;//sets the sweeper arm to upward pos just in case
+			 		motor[motorArm] = -100;
+			 		} else {
+			 		motor[motorArm] = 0;
+			 	}
+			 }
 		}
 		//CONTROLLER 2 JOYSTICK 2 - Flag lift motor
 		if((joystick.joy2_x2<10&&joystick.joy2_x2>-10)&&(joystick.joy2_y2<10&&joystick.joy2_y2>-10))
@@ -79,88 +79,113 @@ task main()
 			joystick.joy2_y2=0;
 		}
 
-		//main drive motor control
+		//if (ServoValue[servoSweep] < 180) { //makes sure the sweeper arm is lifted up before the main arm can move
+		//	if (joy2Btn(6)) {									//so that the main arm cannot get stuck on the sweeper arm.
+		//		servo[servoSweep] = 87;//sets the sweeper arm to upward pos just in case
+		//		motor[motorArm] = 100;
+		//		} else if(joy2Btn(8)) {
+		//		servo[servoSweep] = 87;//sets the sweeper arm to upward pos just in case
+		//		motor[motorArm] = -100;
+		//		} else {
+		//		motor[motorArm] = 0;
+		//	}
+		//}
 
-		motor[motorLeft] = (joystick.joy1_y1 + joystick.joy1_x2);
-		motor[motorRight] = (joystick.joy1_y1 - joystick.joy1_x2);
-
-		motor[motorWinch] = joystick.joy2_y2;
-		//motor[motorLift] = joystick.joy2_x2;
-
-		//SWEEPER ARM
-		if (joystick.joy2_TopHat == 0 || joy1Btn(7)) { //Joy2TopHat or Joy1 lBumber
-			motor[motorScoop] = 100;
-			} else if (joystick.joy2_TopHat == 4 || joy1Btn(8)) { //Joy2TopHat or Joy1 rBumper
-			motor[motorScoop] = -100;
-			} else {
-			motor[motorScoop] = 0;
-		}
-
-		//WINCH HOOK SERVO
-		if (joy2Btn(11)) {
-			servo[servoHook] = 35;
-		}
-
-		if (joy2Btn(12)) {
-			servo[servoHook] = 252;
-		}
-
-		//SWEEPER ARM RAISE/LOWER
-		if (joystick.joy2_TopHat == 2 || joy1Btn(6)) { //Joy2 bPadRight or Joy1 rBumper
-			servo[servoSweep] = 87;//Raised
-			motor[motorScoop] = -100;//sets the bevel gears in by spinning sweeper motor
-			wait1Msec(300);
-			motor[motorScoop] = 0;
-			} else if (joystick.joy2_TopHat == 6 || joy1Btn(5)) { //Joy2 bPadLeft or Joy1 lBumper
-			servo[servoSweep] = 199;//Lowered
-		}
-
-		//SECTION FOR FLAG LIFTER
-		if (joy2Btn(1)) { //bPadTop
-			servo[servoLift] = 16;
-			} else if (joy2Btn(4)) {//bPadBottom
-			servo[servoLift] = 123;
-			motor[motorLift] = 0;
-		}
-
-		//Flag Lifter Motor
-		if (joy2Btn(2)) {
-			motor[motorLift] = 100;
-		} else if (joy2Btn(3)) {
-			motor[motorLift] = -100;
+			//main drive motor control
+	if (!reversedControl) {
+			motor[motorLeft] = (joystick.joy1_y1 + joystick.joy1_x2);
+			motor[motorRight] = (joystick.joy1_y1 - joystick.joy1_x2);
 		} else {
-			motor[motorLift] = 0;
+		motor[motorLeft] = -(joystick.joy1_y1 - joystick.joy1_x2);
+			motor[motorRight] = -(joystick.joy1_y1 + joystick.joy1_x2);
+		}
+		if (joy1Btn(1)) {
+			reversedControl = true;
+		}
+		if (joy1Btn(4)) {
+			reversedControl = false;
 		}
 
-		//Cube Clamp
-		if (joy2Btn(5)) {
-			servo[servoClamp] = 136;
-		} else if (joy2Btn(7)) {
-			servo[servoClamp] = 0;
-		}
+			motor[motorWinch] = joystick.joy2_y2;
+			//motor[motorLift] = joystick.joy2_x2;
 
-		//TEST THING
-		if (bDisconnected) {
-			joystick.joy1_y1 = 0;
-			joystick.joy1_y2 = 0;
-			joystick.joy2_TopHat = -1;
-		}
+			//SWEEPER ARM
+			if (joystick.joy2_TopHat == 0 || joy1Btn(7)) { //Joy2TopHat or Joy1 lBumber
+				motor[motorScoop] = 100;
+				} else if (joystick.joy2_TopHat == 4 || joy1Btn(8)) { //Joy2TopHat or Joy1 rBumper
+				motor[motorScoop] = -100;
+				} else {
+				motor[motorScoop] = 0;
+			}
 
-		if (joy2Btn(10)) {
-			scoreCube();
-		}
+			//WINCH HOOK SERVO
+			if (joy2Btn(11)) {
+				servo[servoHook] = 35;
+			}
 
-		//Anti-jitter
-		wait1Msec(10);
-	}//end of main while(true)
-}//end of task(main)
+			if (joy2Btn(12)) {
+				servo[servoHook] = 252;
+			}
 
-void scoreCube() {
-	motor[motorAutoScore] = 40;
-	wait1Msec(500);
-	motor[motorAutoScore] = 0;
+			//SWEEPER ARM RAISE/LOWER
+			if (joystick.joy2_TopHat == 2 || joy1Btn(6)) { //Joy2 bPadRight or Joy1 rBumper
+				servo[servoSweep] = 87;//Raised
+				motor[motorScoop] = -100;//sets the bevel gears in by spinning sweeper motor
+				wait1Msec(300);
+				motor[motorScoop] = 0;
+				} else if (joystick.joy2_TopHat == 6 || joy1Btn(5)) { //Joy2 bPadLeft or Joy1 lBumper
+				servo[servoSweep] = 199;//Lowered
+				motor[motorScoop] = 100;//sets the bevel gears in by spinning sweeper motor
+				wait1Msec(300);
+				motor[motorScoop] = 0;
+			}
 
-	motor[motorAutoScore] = -40;
-	wait1Msec(500);
-	motor[motorAutoScore] = 0;
-}
+			//SECTION FOR FLAG LIFTER
+			if (joy2Btn(1)) { //bPadTop
+				servo[servoLift] = 16;
+				} else if (joy2Btn(4)) {//bPadBottom
+				servo[servoLift] = 123;
+				motor[motorLift] = 0;
+			}
+
+			//Flag Lifter Motor
+			if (joy2Btn(2)) {
+				motor[motorLift] = 100;
+				} else if (joy2Btn(3)) {
+				motor[motorLift] = -100;
+				} else {
+				motor[motorLift] = 0;
+			}
+
+			//Cube Clamp
+			if (joy2Btn(5)) {
+				servo[servoClamp] = 136;
+				} else if (joy2Btn(7)) {
+				servo[servoClamp] = 0;
+			}
+
+			//TEST THING
+			if (bDisconnected) {
+				joystick.joy1_y1 = 0;
+				joystick.joy1_y2 = 0;
+				joystick.joy2_TopHat = -1;
+			}
+
+			if (joy2Btn(10)) {
+				scoreCube();
+			}
+
+			//Anti-jitter
+			wait1Msec(10);
+		}//end of main while(true)
+	}//end of task(main)
+
+	void scoreCube() {
+		motor[motorAutoScore] = 40;
+		wait1Msec(500);
+		motor[motorAutoScore] = 0;
+
+		motor[motorAutoScore] = -40;
+		wait1Msec(500);
+		motor[motorAutoScore] = 0;
+	}
